@@ -117,8 +117,11 @@ class ValidationParser implements ParserInterface, PostParserInterface
                 $visited[] = $vparams['class'];
                 $vparams['children'] = $this->doParse($vparams['class'], $visited);
             }
+            
+            if (isset($vparams['dataType'])) {
+                $params[$property] = $vparams;
+            }
 
-            $params[$property] = $vparams;
         }
 
         return $params;
