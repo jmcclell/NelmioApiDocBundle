@@ -97,6 +97,12 @@ c:
   * type: boolean
   * required: true
 
+d:
+
+  * type: string
+  * required: true
+  * default value: DefaultTest
+
 
 ### `POST` /tests.{_format} ###
 
@@ -125,6 +131,12 @@ c:
   * type: boolean
   * required: true
 
+d:
+
+  * type: string
+  * required: true
+  * default value: DefaultTest
+
 
 ## /tests2 ##
 
@@ -149,6 +161,11 @@ _post test 2_
 _create another test_
 
 #### Parameters ####
+
+dependency_type:
+
+  * type: object (dependency_type)
+  * required: true
 
 dependency_type[a]:
 
@@ -206,6 +223,7 @@ nested[bar]:
 
   * type: string
   * required: false
+  * default value: baz
 
 nested[baz][]:
 
@@ -276,6 +294,10 @@ nested_array[]:
 _Testing return_
 
 #### Response ####
+
+dependency_type:
+
+  * type: object (dependency_type)
 
 dependency_type[a]:
 
@@ -418,6 +440,18 @@ nested_array[]:
 
 
 
+### `POST` /z-action-with-nullable-request-param ###
+
+
+#### Parameters ####
+
+param1:
+
+  * type: string
+  * required: false
+  * description: Param1 description.
+
+
 ### `GET` /z-action-with-query-param ###
 
 
@@ -489,6 +523,18 @@ number:
 
   * type: DateTime
 
+related:
+
+  * type: object (Test)
+
+related[a]:
+
+  * type: string
+
+related[b]:
+
+  * type: DateTime
+
 
 ### `ANY` /z-return-selected-parsers-input ###
 
@@ -510,6 +556,12 @@ c:
 
   * type: boolean
   * required: true
+
+d:
+
+  * type: string
+  * required: true
+  * default value: DefaultTest
 
 
 ### `ANY` /z-return-selected-parsers-output ###
@@ -534,6 +586,18 @@ objects[][b]:
   * type: DateTime
 
 number:
+
+  * type: DateTime
+
+related:
+
+  * type: object (Test)
+
+related[a]:
+
+  * type: string
+
+related[b]:
 
   * type: DateTime
 MARKDOWN;

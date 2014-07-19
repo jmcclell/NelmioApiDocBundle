@@ -127,6 +127,8 @@ The following properties are available:
 
 * `deprecated`: allow to set method as deprecated (default: `false`);
 
+* `tags`: allow to tag a method (e.g. `beta` or `in-development`). Either a single tag or an array of tags.
+
 * `filters`: an array of filters;
 
 * `requirements`: an array of requirements;
@@ -246,11 +248,10 @@ documentation.
 
 #### Form Types Features
 
-If you use `FormFactoryInterface::createdNamed('', 'your_form_type'`, then by
-default the documentation will use the form type name as the prefix
+Even if you use `FormFactoryInterface::createNamed('', 'your_form_type')` the documentation will generate the form type name as the prefix for inputs
 (`your_form_type[param]` ... instead of just `param`).
 
-You can specify which prefix to use with the `name` key:
+You can specify which prefix to use with the `name` key in the `input` section:
 
 ```
 input = {
@@ -320,20 +321,23 @@ configure this sandbox using the following parameters:
             accept_type: application/json           # default is `~` (`null`), if set, the value is
                                                     # automatically populated as the `Accept` header
 
-            body_format: form                       # default is `form`, determines whether to send
+            body_format:
+                formats: [ form, json ]             # array of enabled body formats,
+                                                    # remove all elements to disable the selectbox
+                default_format: form                # default is `form`, determines whether to send
                                                     # `x-www-form-urlencoded` data or json-encoded
                                                     # data (by setting this parameter to `json`) in
                                                     # sandbox requests
 
             request_format:
-                formats:                            # default `json` and `xml`,
+                formats:                            # default is `json` and `xml`,
                     json: application/json          # override to add custom formats or disable
-                    xml: application/xml            # default formats
+                    xml: application/xml            # the default formats
 
-                method: format_param    # default `format_param`, alternately `accept_header`,
+                method: format_param    # default is `format_param`, alternately `accept_header`,
                                         # decides how to request the response format
 
-                default_format: json    # default `json`,
+                default_format: json    # default is `json`,
                                         # default content format to request (see formats)
 
 ### Command
@@ -407,23 +411,31 @@ Look at the built-in [Handlers](https://github.com/nelmio/NelmioApiDocBundle/tre
 
 ``` yaml
 nelmio_api_doc:
-    name:                     API documentation
-    exclude_sections:         []
+    name:                 'API documentation'
+    exclude_sections:     []
     motd:
-        template:             NelmioApiDocBundle::Components/motd.html.twig
+        template:             'NelmioApiDocBundle::Components/motd.html.twig'
     request_listener:
         enabled:              true
         parameter:            _doc
     sandbox:
         enabled:              true
-        endpoint:             ~
-        accept_type:          ~
-        body_format:          form
+        endpoint:             null
+        accept_type:          null
+        body_format:
+            formats:
+
+                # Defaults:
+                - form
+                - json
+            default_format:       ~ # One of "form"; "json"
         request_format:
             formats:
-                json: application/json
-                xml: application/xml
-            method:               format_param
+
+                # Defaults:
+                json:                application/json
+                xml:                 application/xml
+            method:               ~ # One of "format_param"; "accept_header"
             default_format:       json
         authentication:
             name:                 ~ # Required
