@@ -319,7 +319,7 @@
                         }
                     });
 
-                    if (hasFileTypes && ['POST', 'PUT', 'PATCH'].indexOf(method) < 0) {
+                    if (hasFileTypes && method != 'POST') {
                         alert("Sorry, you can only submit files via POST, PUT, or PATCH.");
                         return false;
                     }
