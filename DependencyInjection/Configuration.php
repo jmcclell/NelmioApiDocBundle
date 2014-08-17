@@ -86,17 +86,77 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('authentication')
                             ->children()
-                                ->scalarNode('name')->isRequired()->end()
                                 ->scalarNode('delivery')
                                     ->isRequired()
                                     ->validate()
-                                        ->ifNotInArray(array('query', 'http_basic', 'header'))
+                                        ->ifNotInArray(array('query', 'http', 'header'))
                                         ->thenInvalid("Unknown authentication delivery type '%s'.")
                                     ->end()
                                 ->end()
+                                ->scalarNode('name')->isRequired()->end()
+                                ->enumNode('type')
+                                    ->info('Required if http delivery is selected.')
+                                    ->values(array('basic', 'bearer'))
+                                ->end()
                                 ->booleanNode('custom_endpoint')->defaultFalse()->end()
                             ->end()
+                            ->validate()
+                                ->ifTrue(function ($v) {
+                                    return 'http' === $v['delivery'] && !$v['type'] ;
+                                })
+                                ->thenInvalid('"type" is required when using http delivery.')
+                            ->end()
+                            # http_basic BC
+                            ->beforeNormalization()
+                                ->ifTrue(function ($v) {
+                                    return 'http_basic' === $v['delivery'];
+                                })
+                                ->then(function ($v) {
+                                    $v['delivery'] = 'http';
+                                    $v['type'] = 'basic';
+
+                                    return $v;
+                                })
+                            ->end()
+                            ->beforeNormalization()
+                                ->ifTrue(function ($v) {
+                                    return 'http' === $v['delivery'];
+                                })
+                                ->then(function ($v) {
+                                    if ('http' === $v['delivery'] && !isset($v['name'])) {
+                                        $v['name'] = 'Authorization';
+                                    }
+
+                                    return $v;
+                                })
+                            ->end()
                         ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('swagger')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('api_base_path')->defaultValue('/api')->end()
+                        ->scalarNode('swagger_version')->defaultValue('1.2')->end()
+                        ->scalarNode('api_version')->defaultValue('0.1')->end()
+                        ->arrayNode('info')
+                            ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->scalarNode('title')->defaultValue('Symfony2')->end()
+                                    ->scalarNode('description')->defaultValue('My awesome Symfony2 app!')->end()
+                                    ->scalarNode('TermsOfServiceUrl')->defaultValue(null)->end()
+                                    ->scalarNode('contact')->defaultValue(null)->end()
+                                    ->scalarNode('license')->defaultValue(null)->end()
+                                    ->scalarNode('licenseUrl')->defaultValue(null)->end()
+                                ->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('cache')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')->defaultValue(false)->end()
+                        ->scalarNode('file')->defaultValue('%kernel.cache_dir%/api-doc.cache')->end()
                     ->end()
                 ->end()
             ->end();

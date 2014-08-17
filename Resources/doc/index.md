@@ -307,7 +307,10 @@ configure this sandbox using the following parameters:
 
                 name: access_token      # access token name or query parameter name or header name
 
-                delivery: query         # `query`, `http_basic`, and `header` are supported
+                delivery: http          # `query`, `http`, and `header` are supported
+
+                # Required if http delivery is selected.
+                type:     basic         # `basic`, `bearer` are supported
 
                 custom_endpoint: true   # default is `false`, if `true`, your user will be able to
                                         # specify its own endpoint
@@ -364,6 +367,29 @@ You can specify your own API name:
     # app/config/config.yml
     nelmio_api_doc:
         name: My API
+
+You can choose between different authentication methods:
+
+    # app/config/config.yml
+    nelmio_api_doc:
+        authentication:
+            delivery: header
+            name:     X-Custom
+
+    # app/config/config.yml
+    nelmio_api_doc:
+        authentication:
+            delivery: query
+            name:     param
+
+    # app/config/config.yml
+    nelmio_api_doc:
+        authentication:
+            delivery: http
+            type:     basic # or bearer
+
+When choosing an `http` delivery, `name` defaults to `Authorization`,
+and the header value will automatically be prefixed by the corresponding type (ie. `Basic` or `Bearer`).
 
 You can specify which sections to exclude from the documentation generation:
 
@@ -438,7 +464,10 @@ nelmio_api_doc:
             method:               ~ # One of "format_param"; "accept_header"
             default_format:       json
         authentication:
-            name:                 ~ # Required
             delivery:             ~ # Required
+            name:                 ~ # Required
+
+            # Required if http delivery is selected.
+            type:                 ~ # One of "basic"; "bearer"
             custom_endpoint:      false
 ```
