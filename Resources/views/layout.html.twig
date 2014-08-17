@@ -263,8 +263,8 @@
                         if (xDebugToken) {
                             var toolbarElement = $('.sf-toolbar');
                             if (toolbarElement.length) {
-                                Sfjs.load(toolbarElement[0].id, '/_wdt/'+ xDebugToken);                          
-                            }                                                   
+                                Sfjs.load(toolbarElement[0].id, '/_wdt/'+ xDebugToken);
+                            }
                         }
                     }
                 };
@@ -277,7 +277,7 @@
                     updateWebProfilerToolbar(xhr);
                     result_container.show();
                 };
-                
+
                 $('.pane.sandbox form').submit(function() {
                     var url = $(this).attr('action'),
                         method = $(this).attr('method'),
@@ -441,7 +441,11 @@
 
                                 if ('http' == authentication_delivery) {
                                     if ('basic' == authentication_type) {
-                                        value = 'Basic ' + btoa($('#api_login').val() + ':' + $('#api_pass').val());
+                                        var login = $('#api_login').val();
+                                        var pass = $('#api_pass').val();
+                                        if (login && pass) {
+                                            value = 'Basic ' + btoa(login + ':' + pass);
+                                        }
                                     } else if ('bearer' == authentication_type) {
                                         value = 'Bearer ' + $('#api_key').val();
                                     }
